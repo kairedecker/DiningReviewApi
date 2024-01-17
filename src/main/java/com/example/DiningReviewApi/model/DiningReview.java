@@ -1,5 +1,6 @@
 package com.example.DiningReviewApi.model;
 
+import com.example.DiningReviewApi.enums.DiningReviewEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +22,7 @@ public class DiningReview {
     private Long eggScore;
     private Long dairyScore;
     private String commentary;
-    private String status;
+    private DiningReviewEnum status;
 
     public DiningReview(DiningReview diningReview){
         this.username = diningReview.getUsername();
