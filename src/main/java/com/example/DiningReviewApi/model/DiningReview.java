@@ -13,7 +13,6 @@ public class DiningReview {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @NonNull
     private Long id;
 
     private String username;
@@ -23,15 +22,5 @@ public class DiningReview {
     private Long dairyScore;
     private String commentary;
     private DiningReviewEnum status;
-
-    public DiningReview(DiningReview diningReview){
-        this.username = diningReview.getUsername();
-        this.restaurantId = diningReview.getRestaurantId();
-        this.peanutScore = diningReview.getPeanutScore();
-        this.eggScore = diningReview.getEggScore();
-        this.dairyScore = diningReview.getDairyScore();
-        this.commentary = diningReview.getCommentary();
-        this.status = diningReview.getStatus();
-    }
 
 }

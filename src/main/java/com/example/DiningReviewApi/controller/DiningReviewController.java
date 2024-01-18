@@ -3,10 +3,13 @@ package com.example.DiningReviewApi.controller;
 import com.example.DiningReviewApi.enums.DiningReviewEnum;
 import com.example.DiningReviewApi.model.DiningReview;
 import com.example.DiningReviewApi.model.Restaurant;
+import com.example.DiningReviewApi.model.User;
 import com.example.DiningReviewApi.repository.DiningReviewRepository;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.DiningReviewApi.repository.RestaurantRepository;
+import com.example.DiningReviewApi.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +19,23 @@ import org.springframework.web.bind.annotation.*;
 public class DiningReviewController {
 
     DiningReviewRepository diningReviewRepository;
+    UserRepository userRepository;
 
-    public DiningReviewController(DiningReviewRepository diningReviewRepository){
+    RestaurantRepository restaurantRepository;
+
+    public DiningReviewController(DiningReviewRepository diningReviewRepository, UserRepository userRepository, RestaurantRepository restaurantRepository){
         this.diningReviewRepository = diningReviewRepository;
+        this.userRepository = userRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/")
+    public ResponseEntity getAllReviews(){
+        Iterable<DiningReview> reviews = this.diningReviewRepository.findAll();
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
     public ResponseEntity getReview(@RequestParam Long id){
         Optional<DiningReview> diningReviewOptional = this.diningReviewRepository.findById(id);
         if(diningReviewOptional.isEmpty()){
@@ -53,7 +67,17 @@ public class DiningReviewController {
 
     @PostMapping("/submit")
     public ResponseEntity createNewReview(@RequestBody DiningReview newDiningReview){
-        // TODO: Check if newDiningReview attributes are defined and correct!
+        // TODO: Check if newDiningReview attributes are defined and correct! -> Minimal: check if user that submits reviews exists!
+
+        Optional<User> userOptional = this.userRepository.findById(newDiningReview.getUsername());
+        if(userOptional.isEmpty()) {
+            return new ResponseEntity<>("User not found!", HttpStatus.BAD_REQUEST);
+        }
+        Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(newDiningReview.getRestaurantId());
+        if(restaurantOptional.isEmpty()){
+            return new ResponseEntity<>("Restaurant not found!", HttpStatus.BAD_REQUEST);
+        }
+
         newDiningReview.setStatus(DiningReviewEnum.PENDING);
 
         DiningReview createdDiningReview = this.diningReviewRepository.save(newDiningReview);

@@ -10,8 +10,8 @@ public interface RestaurantRepository extends CrudRepository<Restaurant, Long> {
 
     Boolean existsByNameAndZipCode(String name, Long zipCode);
 
-    List<Restaurant> findAllByZipCodeAndPeanutScoreIsNotNullOrderByZipCodeDesc(Long zipCode);
-    List<Restaurant> findAllByZipCodeAndEggScoreIsNotNullOrderByZipCodeDesc(Long zipCode);
-    List<Restaurant> findAllByZipCodeAndDairyScoreIsNotNullOrderByZipCodeDesc(Long zipCode);
+    List<Restaurant> findAllByZipCodeAndPeanutScoreAverageIsNotNullOrderByZipCodeDesc(Long zipCode);
+    List<Restaurant> findAllByZipCodeAndEggScoreAverageIsNotNullOrderByZipCodeDesc(Long zipCode);
+    List<Restaurant> findAllByZipCodeAndDairyScoreAverageIsNotNullOrderByZipCodeDesc(Long zipCode);
 
 }

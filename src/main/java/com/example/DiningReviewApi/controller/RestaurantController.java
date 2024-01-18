@@ -42,11 +42,11 @@ public class RestaurantController {
         List<Restaurant> restaurants;
         switch (allergy){
             case "peanuts":
-                restaurants = this.restaurantRepository.findAllByZipCodeAndPeanutScoreIsNotNullOrderByZipCodeDesc(zipCode);
+                restaurants = this.restaurantRepository.findAllByZipCodeAndPeanutScoreAverageIsNotNullOrderByZipCodeDesc(zipCode);
             case "egg":
-                restaurants = this.restaurantRepository.findAllByZipCodeAndEggScoreIsNotNullOrderByZipCodeDesc(zipCode);
+                restaurants = this.restaurantRepository.findAllByZipCodeAndEggScoreAverageIsNotNullOrderByZipCodeDesc(zipCode);
             case "dairy":
-                restaurants = this.restaurantRepository.findAllByZipCodeAndDairyScoreIsNotNullOrderByZipCodeDesc(zipCode);
+                restaurants = this.restaurantRepository.findAllByZipCodeAndDairyScoreAverageIsNotNullOrderByZipCodeDesc(zipCode);
             default:
                 restaurants = this.restaurantRepository
                         .findAllByZipCodeOrderByZipCodeDesc(zipCode);
@@ -56,8 +56,8 @@ public class RestaurantController {
 
     @PostMapping("/create/")
     public ResponseEntity createRestaurant(@RequestBody Restaurant newRestaurant){
-        if(this.restaurantRepository.existsById(newRestaurant.getId()) ||
-                this.restaurantRepository.existsByNameAndZipCode(newRestaurant.getName(), newRestaurant.getZipCode())){
+
+        if(this.restaurantRepository.existsByNameAndZipCode(newRestaurant.getName(), newRestaurant.getZipCode())){
             return new ResponseEntity<>("Restaurant already exists!", HttpStatus.BAD_REQUEST);
         }
         // TODO: Check if restaurant attributes are defined and correct!
