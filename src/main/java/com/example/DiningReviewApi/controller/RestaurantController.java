@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/restaurant")
+@RequestMapping("/api/restaurant")
 public class RestaurantController {
 
     RestaurantRepository restaurantRepository;
@@ -56,7 +56,8 @@ public class RestaurantController {
 
     @PostMapping("/create/")
     public ResponseEntity createRestaurant(@RequestBody Restaurant newRestaurant){
-        if(this.restaurantRepository.existsById(newRestaurant.getId())){
+        if(this.restaurantRepository.existsById(newRestaurant.getId()) ||
+                this.restaurantRepository.existsByNameAndZipCode(newRestaurant.getName(), newRestaurant.getZipCode())){
             return new ResponseEntity<>("Restaurant already exists!", HttpStatus.BAD_REQUEST);
         }
         // TODO: Check if restaurant attributes are defined and correct!
