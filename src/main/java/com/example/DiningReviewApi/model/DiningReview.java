@@ -1,10 +1,11 @@
 package com.example.DiningReviewApi.model;
 
 import com.example.DiningReviewApi.enums.DiningReviewEnum;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -17,10 +18,23 @@ public class DiningReview {
 
     private String username;
     private Long restaurantId;
-    private Long peanutScore;
-    private Long eggScore;
-    private Long dairyScore;
+    private Integer peanutScore; // Optional 1-5
+    private Integer eggScore; // Optional 1-5
+    private Integer dairyScore; // Optional 1-5
     private String commentary;
     private DiningReviewEnum status;
+
+    // Entity relation
+    /*
+    @OneToOne
+    @JoinColumn(name = "restaurantId")
+    @JsonBackReference(value = "restaurant-review")
+    private Restaurant restaurant;
+
+    @OneToOne
+    @JoinColumn(name = "username")
+    @JsonBackReference(value = "user-review")
+    private User user;
+    */
 
 }

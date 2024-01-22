@@ -34,7 +34,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("/create/")
+    @PostMapping("/")
     public ResponseEntity createUser(@RequestBody User newUser){
         if(this.userRepository.existsById(newUser.getUsername())){
             return new ResponseEntity<>("User already exists!", HttpStatus.BAD_REQUEST);
@@ -55,6 +55,8 @@ public class UserController {
         }
         User userToUpdate = userToUpdateOptional.get();
 
+        System.out.println(userToUpdate.getZipCode());
+
         // TODO: Check if user attributes are defined and correct!
         userToUpdate.setCity(updateUser.getCity());
         userToUpdate.setState(userToUpdate.getState());
@@ -68,7 +70,7 @@ public class UserController {
         return new ResponseEntity<>(updatedUser, HttpStatus.ACCEPTED);
     }
 
-    @PutMapping("/updateToAdmin/{id}")
+    @PutMapping("/admin/{id}")
     public ResponseEntity updateUserToAdmin(@PathVariable String id){
         Optional<User> userToUpdateOptional = this.userRepository.findById(id);
 

@@ -1,10 +1,17 @@
 package com.example.DiningReviewApi.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Data
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Restaurant {
 
     @Id
@@ -17,5 +24,9 @@ public class Restaurant {
     private Float eggScoreAverage;
     private Float dairyScoreAverage;
     private Float overallScore;
+
+    @OneToMany(mappedBy = "restaurantId", cascade = CascadeType.ALL)
+    //@JsonManagedReference(value = "restaurant-review")
+    private List<DiningReview> diningReviews;
 
 }

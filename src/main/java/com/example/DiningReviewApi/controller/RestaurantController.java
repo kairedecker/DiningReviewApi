@@ -42,11 +42,14 @@ public class RestaurantController {
         List<Restaurant> restaurants;
         switch (allergy){
             case "peanuts":
-                restaurants = this.restaurantRepository.findAllByZipCodeAndPeanutScoreAverageIsNotNullOrderByZipCodeDesc(zipCode);
+                restaurants = this.restaurantRepository
+                        .findAllByZipCodeAndPeanutScoreAverageIsNotNullOrderByZipCodeDesc(zipCode);
             case "egg":
-                restaurants = this.restaurantRepository.findAllByZipCodeAndEggScoreAverageIsNotNullOrderByZipCodeDesc(zipCode);
+                restaurants = this.restaurantRepository
+                        .findAllByZipCodeAndEggScoreAverageIsNotNullOrderByZipCodeDesc(zipCode);
             case "dairy":
-                restaurants = this.restaurantRepository.findAllByZipCodeAndDairyScoreAverageIsNotNullOrderByZipCodeDesc(zipCode);
+                restaurants = this.restaurantRepository
+                        .findAllByZipCodeAndDairyScoreAverageIsNotNullOrderByZipCodeDesc(zipCode);
             default:
                 restaurants = this.restaurantRepository
                         .findAllByZipCodeOrderByZipCodeDesc(zipCode);
@@ -54,7 +57,7 @@ public class RestaurantController {
         return new ResponseEntity<>(restaurants, HttpStatus.OK);
     }
 
-    @PostMapping("/create/")
+    @PostMapping("/")
     public ResponseEntity createRestaurant(@RequestBody Restaurant newRestaurant){
 
         if(this.restaurantRepository.existsByNameAndZipCode(newRestaurant.getName(), newRestaurant.getZipCode())){

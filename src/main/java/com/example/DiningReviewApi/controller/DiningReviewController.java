@@ -20,10 +20,10 @@ public class DiningReviewController {
 
     DiningReviewRepository diningReviewRepository;
     UserRepository userRepository;
-
     RestaurantRepository restaurantRepository;
 
-    public DiningReviewController(DiningReviewRepository diningReviewRepository, UserRepository userRepository, RestaurantRepository restaurantRepository){
+    public DiningReviewController(DiningReviewRepository diningReviewRepository, UserRepository userRepository,
+                                  RestaurantRepository restaurantRepository){
         this.diningReviewRepository = diningReviewRepository;
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
@@ -36,7 +36,7 @@ public class DiningReviewController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getReview(@RequestParam Long id){
+    public ResponseEntity getReview(@PathVariable Long id){
         Optional<DiningReview> diningReviewOptional = this.diningReviewRepository.findById(id);
         if(diningReviewOptional.isEmpty()){
             return new ResponseEntity<>("Review not found!", HttpStatus.BAD_REQUEST);
@@ -45,9 +45,11 @@ public class DiningReviewController {
         return new ResponseEntity<>(diningReview, HttpStatus.OK);
     }
 
-    @GetMapping("/{status}")
-    public ResponseEntity getReviewsByStatus(@RequestParam String status){
+    @GetMapping("/status/{status}")
+    public ResponseEntity getReviewsByStatus(@PathVariable String status){
+
         DiningReviewEnum statusReceived = statusHelper(status);
+
         if(statusReceived == null){
             return new ResponseEntity<>("Incorrect status submitted!", HttpStatus.BAD_REQUEST);
         }
@@ -65,20 +67,27 @@ public class DiningReviewController {
         return null;
     }
 
-    @PostMapping("/submit")
+    @PostMapping("/")
     public ResponseEntity createNewReview(@RequestBody DiningReview newDiningReview){
-        // TODO: Check if newDiningReview attributes are defined and correct! -> Minimal: check if user that submits reviews exists!
 
-        Optional<User> userOptional = this.userRepository.findById(newDiningReview.getUsername());
+        // TODO: Check if newDiningReview attributes are defined and correct! -> Minimal: check if user that submits reviews exists!
+        String username = newDiningReview.getUsername();
+        Optional<User> userOptional = this.userRepository.findById(username);
         if(userOptional.isEmpty()) {
             return new ResponseEntity<>("User not found!", HttpStatus.BAD_REQUEST);
         }
-        Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(newDiningReview.getRestaurantId());
+
+        Long restaurantId = newDiningReview.getRestaurantId();
+
+        Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(restaurantId);
         if(restaurantOptional.isEmpty()){
             return new ResponseEntity<>("Restaurant not found!", HttpStatus.BAD_REQUEST);
         }
 
         newDiningReview.setStatus(DiningReviewEnum.PENDING);
+
+        newDiningReview.setUsername(userOptional.get().getUsername());
+        newDiningReview.setRestaurantId(restaurantOptional.get().getId());
 
         DiningReview createdDiningReview = this.diningReviewRepository.save(newDiningReview);
 
@@ -86,13 +95,10 @@ public class DiningReviewController {
     }
 
     @PostMapping("/admin/{id}")
-    public ResponseEntity updateReviewStatus(@PathVariable Long id, @RequestBody String status){
-        // TODO: Check if status arrives
-        System.out.println(status);
+    public ResponseEntity updateReviewStatus(@PathVariable Long id, @RequestParam Boolean isApproved){
 
-        DiningReviewEnum statusReceived = statusHelper(status);
-        if(statusReceived == null){
-            return new ResponseEntity<>("Incorrect status submitted!", HttpStatus.BAD_REQUEST);
+        if(isApproved == null){
+            return new ResponseEntity<>("No status submitted!", HttpStatus.BAD_REQUEST);
         }
 
         Optional<DiningReview> diningReviewToUpdateOptional = this.diningReviewRepository.findById(id);
@@ -102,10 +108,14 @@ public class DiningReviewController {
         DiningReview diningReviewToUpdate = diningReviewToUpdateOptional.get();
 
         if(diningReviewToUpdate.getStatus() != DiningReviewEnum.PENDING){
-            return new ResponseEntity<>("Review already updated! Current Status: " + diningReviewToUpdate.getStatus().toString(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Review already updated! Current Status: "
+                    + diningReviewToUpdate.getStatus().toString(), HttpStatus.BAD_REQUEST);
         }
-
-        diningReviewToUpdate.setStatus(statusReceived);
+        if (isApproved){
+            diningReviewToUpdate.setStatus(DiningReviewEnum.ACCEPTED);
+        }else{
+            diningReviewToUpdate.setStatus(DiningReviewEnum.REJECTED);
+        }
 
         // TODO: Calculation of scores if a new Review is added and approved by Admin!
 
@@ -113,10 +123,5 @@ public class DiningReviewController {
 
         return new ResponseEntity<>(diningReviewUpdated, HttpStatus.OK);
     }
-
-
-
-
-
 
 }
