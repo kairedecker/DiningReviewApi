@@ -70,7 +70,8 @@ public class DiningReviewController {
     @PostMapping("/")
     public ResponseEntity createNewReview(@RequestBody DiningReview newDiningReview){
 
-        // TODO: Check if newDiningReview attributes are defined and correct! -> Minimal: check if user that submits reviews exists!
+        // TODO: Check if newDiningReview attributes are defined and correct!
+        //  -> Minimal: check if user that submits reviews exists!
         String username = newDiningReview.getUsername();
         Optional<User> userOptional = this.userRepository.findById(username);
         if(userOptional.isEmpty()) {

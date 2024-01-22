@@ -1,6 +1,5 @@
 package com.example.DiningReviewApi.controller;
 
-import ch.qos.logback.core.pattern.util.RestrictedEscapeUtil;
 import com.example.DiningReviewApi.model.Restaurant;
 import com.example.DiningReviewApi.repository.RestaurantRepository;
 import org.springframework.http.HttpStatus;
